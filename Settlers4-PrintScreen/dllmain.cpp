@@ -63,22 +63,33 @@ BOOL WINAPI SaveScreenToClipboard()
 	return TRUE;
 }
 
-LPVOID __cdecl Hook_createScreenBitmap(LPVOID buffer, LPBITMAPINFO lpbmi, HGDIOBJ h, HBITMAP hbm, int bpp, char topToBottom);
-HOOK Ivk_createScreenBitmap AS(0x004E0A90, Hook_createScreenBitmap);
-LPVOID __cdecl Hook_createScreenBitmap(LPVOID buffer, LPBITMAPINFO lpbmi, HGDIOBJ h, HBITMAP hbm, int bpp, char topToBottom)
+BOOL saveToGrabFolder;
+
+void __cdecl Hook_saveJPGScreenshotFile(int a1, const char* a2, int a3, int a4); // old std::string?
+HOOK Ivk_saveJPGScreenshotFile AS(0x004E0800, Hook_saveJPGScreenshotFile);
+void __cdecl Hook_saveJPGScreenshotFile(int a1, const char* a2, int a3, int a4)
 {
-	Ivk_createScreenBitmap.Detach();
+	Ivk_saveJPGScreenshotFile.Detach();
 
 	SaveScreenToClipboard();
-	LPVOID bBits = Ivk_createScreenBitmap(buffer, lpbmi, h, hbm, bpp, topToBottom);
 
-	Ivk_createScreenBitmap.Attach();
+	if (saveToGrabFolder)
+		Ivk_saveJPGScreenshotFile(a1, a2, a3, a4);
 
-	return bBits;
+	Ivk_saveJPGScreenshotFile.Attach();
 }
 
 VOID WINAPI onDllAttach(HMODULE hModule)
 {
+	CHAR iniFilePart[] = "\\Exe\\plugins\\PrintScreen.ini";
+	CHAR iniFilePath[MAX_PATH] = {};
+
+	DWORD result = GetCurrentDirectoryA(MAX_PATH, iniFilePath);
+
+	if (result != 0 && result <= MAX_PATH - sizeof(iniFilePart));
+	strcat_s(iniFilePath, iniFilePart);
+
+	saveToGrabFolder = GetPrivateProfileIntA("PrintScreen", "SaveToGrabFolder", TRUE, iniFilePath);
 }
 
 VOID WINAPI onDllDetach()
