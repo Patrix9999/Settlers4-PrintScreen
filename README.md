@@ -10,7 +10,8 @@ You need an ASI Loader to use this mod. I recommend [The Settlers 4: ASI Loader]
 
 1. [Download](https://github.com/Patrix9999/Settlers4-PrintScreen/releases) a release.
 2. Unpack the files into your `plugins` directory.
-3. Start the game. The mod will load automatically.
+3. (Optional) Edit `PrintScreen.ini` file, set `SaveToGrabFolder` to your liking, `1` means that .jpg game screenshots will be saved into `Game/Grab` folder, `0` disables it.
+4. Start the game. The mod will load automatically.
 
 To uninstall the mod remove `PrintScreen.asi` from your`plugins` directory. 
 
