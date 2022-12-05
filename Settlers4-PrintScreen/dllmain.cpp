@@ -79,29 +79,6 @@ LPVOID __cdecl Hook_createScreenBitmap(LPVOID buffer, LPBITMAPINFO lpbmi, HGDIOB
 
 VOID WINAPI onDllAttach(HMODULE hModule)
 {
-	CHAR iniFilePart[] = "\\Exe\\plugins\\PrintScreen.ini";
-	CHAR iniFilePath[MAX_PATH] = {};
-
-	DWORD result = GetCurrentDirectoryA(MAX_PATH, iniFilePath);
-
-	if (result != 0 && result <= MAX_PATH - sizeof(iniFilePart));
-		strcat_s(iniFilePath, iniFilePart);
-
-	BOOL saveToGrabFolder = GetPrivateProfileIntA("PrintScreen", "SaveToGrabFolder", TRUE, iniFilePath);
-
-	if (!saveToGrabFolder)
-	{
-		DWORD protection;
-
-		VirtualProtect((LPVOID)0x004EA005, 5, PAGE_EXECUTE_READWRITE, &protection);
-		memset((LPVOID)0x004EA005, 0x90, 5);
-		VirtualProtect((LPVOID)0x004EA005, 5, protection, &protection);
-
-		VirtualProtect((LPVOID)0x004EA17F, 5, PAGE_EXECUTE_READWRITE, &protection);
-		memset((LPVOID)0x004EA17F, 0x90, 5);
-		VirtualProtect((LPVOID)0x004EA17F, 5, protection, &protection);
-
-	}
 }
 
 VOID WINAPI onDllDetach()
